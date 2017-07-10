@@ -1,6 +1,8 @@
+var env = require('env2')('.env');
 var got = require('got');
+
 var async = require('async');
-var youtubeApiKey = 'AIzaSyA6F1rENpSg4_e3aYZaRm2IqGTccyOZRPw';
+var youtubeApiKey = process.env.YT_API_KEY;
 
 var array = ["d1D7ImXE7sE", "W1EO0f6BPPA", "DqTLvjssFbg", "GqmS2Aq9tlk", "LeA0pyZ_bPw", "cnjcVW_aulM", "D8FPm4Qs4o4", "g5Pn69zN0J4", "0CkiXo3MNJ0", "oAuEXU_eCp8", "EF_85_H2EMw", "Y_SIPNIyFrY", "NmxBQx5Br2w", "6jKAZr4fIvE", "5L0nmcU7uNU", "YreUTks29dc", "YLjPGoHqYM8", "LzBsKQO1D_s"];
 
