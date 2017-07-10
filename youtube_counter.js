@@ -1,36 +1,41 @@
-var env = require('env2')('.env');
-var got = require('got');
+/*jshint esversion: 6 */
 
-var async = require('async');
-var youtubeApiKey = process.env.YT_API_KEY;
+const env = require('env2')('.env');
+const got = require('got');
+const async = require('async');
 
-var array = ["d1D7ImXE7sE", "W1EO0f6BPPA", "DqTLvjssFbg", "GqmS2Aq9tlk", "LeA0pyZ_bPw", "cnjcVW_aulM", "D8FPm4Qs4o4", "g5Pn69zN0J4", "0CkiXo3MNJ0", "oAuEXU_eCp8", "EF_85_H2EMw", "Y_SIPNIyFrY", "NmxBQx5Br2w", "6jKAZr4fIvE", "5L0nmcU7uNU", "YreUTks29dc", "YLjPGoHqYM8", "LzBsKQO1D_s"];
+// Enter your own YT API Key here
+const youtubeApiKey = process.env.YT_API_KEY;
 
-var url = 'https://www.googleapis.com/youtube/v3/videos?key='+youtubeApiKey+'&part=statistics&id=';
+// Array of Youtube UIDs
+const array = ["d1D7ImXE7sE", "W1EO0f6BPPA", "DqTLvjssFbg", "GqmS2Aq9tlk", "LeA0pyZ_bPw", "cnjcVW_aulM", "D8FPm4Qs4o4", "g5Pn69zN0J4", "0CkiXo3MNJ0", "oAuEXU_eCp8", "EF_85_H2EMw", "Y_SIPNIyFrY", "NmxBQx5Br2w", "6jKAZr4fIvE", "5L0nmcU7uNU", "YreUTks29dc", "YLjPGoHqYM8", "LzBsKQO1D_s"];
 
+// API URL
+const url = 'https://www.googleapis.com/youtube/v3/videos?key='+youtubeApiKey+'&part=statistics&id=';
+
+// We will push results into this array
 var data = [];
-// assuming openFiles is an array of file names
 
 var getData = function(){
 
+	// We will use Async to hit the API multiple times using the YT UIDs
 	async.each(array, function(id, callback) {
-
-		// Perform operation on id here.
-		// console.log('Processing id ' + id);
 
 		got(url + array)
 			.then(function(response){
 				var d = (JSON.parse(response.body));
-				// data.push(response.body);
-				
+
+				// Removing unnecessary keys we are not interesting in
 				delete d.items[0].kind;
 				delete d.items[0].etag;
 
-				// console.log(d.items[0]);
-
+				// Push to our data array
 				data.push(d.items[0]);
+
+				// Callback executes on complete
 				callback();
 			})
+			// If error
 			.catch(function(error){
 				console.log(error.response.body);
 			});
@@ -42,6 +47,7 @@ var getData = function(){
 			// All processing will now stop.
 			console.log('A id failed to process');
 		} else {
+			// Otherwise success
 			console.log('All ids have been processed successfully');
 			console.log(data);
 		}
@@ -49,5 +55,8 @@ var getData = function(){
 
 };
 
+// Run our function
 getData();
 
+// Can be exported as node module as well
+module.exports = getData;
