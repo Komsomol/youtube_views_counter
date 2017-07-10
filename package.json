@@ -2,7 +2,14 @@
   "name": "got_facebook",
   "version": "1.0.0",
   "description": "",
-  "main": "app.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Komsomol/youtube_views_counter.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Komsomol/youtube_views_counter/issues"
+  },
+  "main": "youtube_counter.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
