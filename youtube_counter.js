@@ -49,4 +49,5 @@ var getData = function(){
 
 };
 
+getData();
 
