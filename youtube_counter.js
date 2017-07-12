@@ -1,62 +1,55 @@
 /*jshint esversion: 6 */
-
 const env = require('env2')('.env');
 const got = require('got');
-const async = require('async');
 
 // Enter your own YT API Key here
 const youtubeApiKey = process.env.YT_API_KEY;
 
 // Array of Youtube UIDs
-const array = ["d1D7ImXE7sE", "W1EO0f6BPPA", "DqTLvjssFbg", "GqmS2Aq9tlk", "LeA0pyZ_bPw", "cnjcVW_aulM", "D8FPm4Qs4o4", "g5Pn69zN0J4", "0CkiXo3MNJ0", "oAuEXU_eCp8", "EF_85_H2EMw", "Y_SIPNIyFrY", "NmxBQx5Br2w", "6jKAZr4fIvE", "5L0nmcU7uNU", "YreUTks29dc", "YLjPGoHqYM8", "LzBsKQO1D_s"];
+const array = ["wZC5FoJ-cPU", "aSiAf_qLR4Y", "JlgyYb14O6Q", "mBmuNHtiUQ0", "UVswB4CpOZo", "a4C-vrM4VQA", "1s3g4Ic92tI", "koCGDN8y5SQ", "cNa1eXj90CE", "ASEWfySWb6Q", "qIbzN14kvXQ", "tyDSLVjQYWU", "WALepYw7Qww", "PAawCINgRDU", "47dR2HIAOwA", "KA7nhv6oq9s", "rln5G8Cahww", "01_u4evxMow", "dqNLSqAcIyg",
+"RIwy5uNUfDA"];
 
 // API URL + statistics endpoint
 const url = 'https://www.googleapis.com/youtube/v3/videos?key='+youtubeApiKey+'&part=statistics&id=';
 
-// We will push results into this array
-let data = [];
-
 const getData = () => {
 
-	// We will use Async to hit the API multiple times using the YT UIDs
-	async.each(array, (id, callback) => {
+	// Youtube API returns an array of results if an array of UIDs is passed 
+	got(url + array)
+		.then(response => {
+			if(response.statusCode === 200){
+				processData(JSON.parse(response.body));
+			}
+		})
+		// If error
+		.catch(error => {
+			console.log(error);
+		});
+};
 
-		got(url + array)
-			.then(response => {
-				let d = (JSON.parse(response.body));
+const processData = (d) => {
 
-				// Removing unnecessary keys we are not interesting in
-				delete d.items[0].kind;
-				delete d.items[0].etag;
+	// check if all array elements have been returned
+	if(d.pageInfo.totalResults === array.length){
 
-				// Push to our data array
-				data.push(d.items[0]);
+		console.log("All results present, response matches array");
 
-				// Callback executes on complete
-				callback();
-			})
-			// If error
-			.catch(error => {
-				console.log(error.response.body);
-			});
+		// we map our results to get the viewcount only
+		var counter = d.items.map(function(value, index ){
+			return parseInt(value.statistics.viewCount,10);
+		// we then add up all the results
+		}).reduce(function(total, number){
+			return total + number;
+		});
 
-	}, err => {
-		// if any of the id processing produced an error, err would equal that error
-		if( err ) {
-			// One of the iterations produced an error.
-			// All processing will now stop.
-			console.log('A id failed to process');
-		} else {
-			// Otherwise success
-			console.log('All ids have been processed successfully');
-			console.log(data);
-		}
-	});
+		console.log("Total views for all UIDs is", counter);
 
+	} else {
+
+		console.log('mismatch ', d.pageInfo.totalResults, array.length);
+
+	}
 };
 
 // Run our function
 getData();
-
-// Can be exported as node module as well
-module.exports = getData;

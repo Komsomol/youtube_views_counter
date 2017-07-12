@@ -16,7 +16,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "async": "^2.5.0",
     "env2": "^2.2.0",
     "got": "^7.1.0"
   }
